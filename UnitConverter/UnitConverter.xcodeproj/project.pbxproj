@@ -23,11 +23,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BD76A77B215363D6000EA6EA /* ConvertUnitTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConvertUnitTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDFA24A4214A0DB900489AAB /* UnitConverter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UnitConverter; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDFA24A7214A0DB900489AAB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		BD76A778215363D6000EA6EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BDFA24A1214A0DB900489AAB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -50,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				BDFA24A4214A0DB900489AAB /* UnitConverter */,
+				BD76A77B215363D6000EA6EA /* ConvertUnitTest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,6 +74,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		BD76A77A215363D6000EA6EA /* ConvertUnitTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD76A782215363D6000EA6EA /* Build configuration list for PBXNativeTarget "ConvertUnitTest" */;
+			buildPhases = (
+				BD76A777215363D6000EA6EA /* Sources */,
+				BD76A778215363D6000EA6EA /* Frameworks */,
+				BD76A779215363D6000EA6EA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ConvertUnitTest;
+			productName = ConvertUnitTest;
+			productReference = BD76A77B215363D6000EA6EA /* ConvertUnitTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		BDFA24A3214A0DB900489AAB /* UnitConverter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BDFA24AB214A0DB900489AAB /* Build configuration list for PBXNativeTarget "UnitConverter" */;
@@ -88,12 +114,16 @@
 		BDFA249C214A0DB900489AAB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0940;
+				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = kcushy;
 				TargetAttributes = {
+					BD76A77A215363D6000EA6EA = {
+						CreatedOnToolsVersion = 10.0;
+					};
 					BDFA24A3214A0DB900489AAB = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1000;
 					};
 				};
 			};
@@ -110,11 +140,29 @@
 			projectRoot = "";
 			targets = (
 				BDFA24A3214A0DB900489AAB /* UnitConverter */,
+				BD76A77A215363D6000EA6EA /* ConvertUnitTest */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		BD76A779215363D6000EA6EA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		BD76A777215363D6000EA6EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BDFA24A0214A0DB900489AAB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -126,6 +174,43 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		BD76A780215363D6000EA6EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ConvertUnitTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = kcushy.ConvertUnitTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		BD76A781215363D6000EA6EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ConvertUnitTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = kcushy.ConvertUnitTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
 		BDFA24A9214A0DB900489AAB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -244,7 +329,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -253,13 +338,22 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		BD76A782215363D6000EA6EA /* Build configuration list for PBXNativeTarget "ConvertUnitTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD76A780215363D6000EA6EA /* Debug */,
+				BD76A781215363D6000EA6EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BDFA249F214A0DB900489AAB /* Build configuration list for PBXProject "UnitConverter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
