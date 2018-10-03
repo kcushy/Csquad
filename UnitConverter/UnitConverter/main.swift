@@ -1,3 +1,4 @@
+
 //
 //  main.swift
 //  UnitConverter
@@ -6,152 +7,149 @@
 //  Copyright © 2018년 kcushy. All rights reserved.
 //
 
-
 import Foundation
 
 // type collection
-// FIX ME: Use struct static
-func collectTypes() -> (dict: Dictionary<String, Double>, exceptDict: Dictionary<String, String>,valueStandard: String, setLength: Array<String>, setWeight: Array<String>) {
-    let convertUnitStandards: [String: Double] = ["cm": 1, "m": 100, "inch": 2.54, "yard": 91.44, "g": 1, "kg": 1000, "oz": 28.35, "lb": 453.59]
-    let applyExceptDict = ["m": "cm", "cm": "m", "yard": "m"]
-    let setValueStandard = "1234567890."
-    let setLength = ["cm", "m", "inch", "yard"]
-    let setWeight = ["g", "kg", "oz", "lb"]
-    return (convertUnitStandards, applyExceptDict, setValueStandard, setLength, setWeight)
+// completed: Use struct and type property, DTO..? 포함관  계 has-a
+struct Standard {
+    static let unit = ["cm": 1, "m": 100, "inch": 2.54, "yard": 91.44, "g": 1, "kg": 1000, "oz": 28.35, "lb": 453.59]
+    static let numberID = "1234567890."
+    static var length: Set<String> = ["cm", "m", "inch", "yard"]
+    static var weight: Set<String> = ["g", "kg", "oz", "lb"]
 }
 
 // input a initial value
-func inputMessage() -> String {
-    var outputMessage = String()
+// TODO: do-try-catch
+func request() -> String {
+    print("********************** 단위변환기 Beta *******************\n")
+    print("지원하는 단위는 다음과 같습니다. 단 같은 단위끼리의 변환만 가능합니다.\n")
+    print("길이: \(Standard.length.joined(separator: ", ")),\n무게: \(Standard.weight.joined(separator: ", "))\n")
+    print("*******************************************************\n")
+    print("변환할 값과 단위를 입력하세요 e.g. 180cm m\n: ", terminator: "")
+    var output = String()
     if let message = readLine() {
-        outputMessage = message.trimmingCharacters(in: .whitespaces)
+        output = message.trimmingCharacters(in: .whitespaces)
     }
-    return outputMessage
+    return output
 }
 
 // divide two input value
-func divideTwoInputValues(inputtedUserValue: String) ->  (valueUnit: String, unit: String) {
-    var dividedValueUnit = String()
-    var dividedUnit = String()
-    let dividedStr = inputtedUserValue.split(separator: " ")
-    dividedValueUnit = String(dividedStr[0])
-    guard checkTwoUnitHave(in: dividedStr) else {
-        let returnExceptResult = checkExceptCase(in: dividedValueUnit)
-        dividedValueUnit = returnExceptResult.valueUnit
-        dividedUnit = returnExceptResult.unit
-        return (dividedValueUnit, dividedUnit)
+// if input has a blank, like inch,(blank)yard, how to solve?
+func divideInto(_ userInput: String) ->  (userValue: String, unit: Array<String>) {
+    let twoOrOne = userInput.components(separatedBy: " ").map{ String($0) }
+    let value = twoOrOne[0]
+    guard checkIt(has: twoOrOne) else {
+        let target = subtract(value: value)
+        return (value, target)
     }
-    dividedUnit = String(dividedStr[1])
-    return (dividedValueUnit, dividedUnit)
+    let target = twoOrOne[1].components(separatedBy: ",")
+    return (value, target)
+}
+
+// subtract set
+func subtract(value: String) -> Array<String> {
+    let origin = splitInto(input: value).unit
+    let target: Set<String> = [origin]
+    guard Standard.length.contains(origin) else {
+        return Array(Standard.weight.subtracting(target))
+    }
+    return Array(Standard.length.subtracting(target))
 }
 
 // divide input value into value and unit
-func splitValueAndUnit(in inputValue: String) -> (value: String, unit: String) {
-    var dividedNumValue = String()
-    var dividedUnitValue = String()
-    let setStandard = collectTypes().valueStandard
-    for value in inputValue {
-        switch setStandard.contains(value) {
+func splitInto(input: String) -> (value: String, unit: String) {
+    var originValue = String()
+    var originUnit = String()
+    for value in input {
+        switch Standard.numberID.contains(value) {
         case true:
-            dividedNumValue.append(value)
+            originValue.append(value)
         default:
-            dividedUnitValue.append(value)
+            originUnit.append(value)
         }
     }
-    return (dividedNumValue, dividedUnitValue)
+    return (originValue, originUnit)
 }
-
 
 // check whether input value has two unit
-func checkTwoUnitHave(in inputValue: Array<Substring>) -> Bool {
-    return inputValue.indices.contains(1)
+func checkIt(has: Array<String>) -> Bool {
+    return has.indices.contains(1)
 }
 
-// check except case(have cm, inch, m, yd?)
-func checkExceptCase(in inputValueUnit: String) -> (valueUnit: String, unit: String) {
-    let splitUnit = splitValueAndUnit(in: inputValueUnit).unit
-    var unitToConvert = String()
-    let applyExceptDict = collectTypes().exceptDict
-    guard applyExceptDict.keys.contains(splitUnit) else {
-        return (inputValueUnit, unitToConvert)
-    }
-    if let unit = applyExceptDict[splitUnit] {
-        unitToConvert = String(unit)
-    }
-    return (inputValueUnit, unitToConvert)
-}
 
 // search and convert unit's value
-func searchUnitAndConvertTwoUnit(separatedUnit: String, unitToConvert: String) -> (convertedInputUnitValue: Double, unitToConvertValue: Double) {
-    let convertUnitStandards = collectTypes().dict
-    var convertedInputUnitValue = Double()
-    var unitToConvertValue = Double()
-    for (givenStandardUnit, givenStandardValue) in convertUnitStandards {
-        if givenStandardUnit == separatedUnit {
-            convertedInputUnitValue = givenStandardValue
-        } else if givenStandardUnit == unitToConvert {
-            unitToConvertValue = givenStandardValue
+func searchAndConvert(_ originUnit: String, _ unitToConvert: String) -> (originValue: Double, valueToConvert: Double) {
+    var originValue = Double()
+    var valueToConvert = Double()
+    for (unit, value) in Standard.unit {
+        if unit == originUnit {
+            originValue = value
+        } else if unit == unitToConvert {
+            valueToConvert = value
         }
     }
-    return (convertedInputUnitValue, unitToConvertValue)
+    return (originValue, valueToConvert)
 }
 
 // check the unit is supported.
-func checkSupportUnit(unitToConvert: String) -> Bool {
-    let supportedUnit = collectTypes().dict.keys
-    let checkedResult = supportedUnit.contains(unitToConvert)
-    return checkedResult
+func checkSupportUnit(_ target: Array<String>) -> Bool {
+    let supportedUnit = Standard.unit.keys
+    for unit in target {
+        guard supportedUnit.contains(unit) else {
+            return false
+        }
+    }
+    return true
 }
 
 // check same types
 // FIX ME: try not to use "if~else"
-func checkSameTypes(dividedUnit: String, unitToConvert: String) -> Bool {
-    let setLength = collectTypes().setLength
-    let setWeight = collectTypes().setWeight
-    let dividedUnit = splitValueAndUnit(in: dividedUnit).unit
-    if setLength.contains(dividedUnit) && setLength.contains(unitToConvert) {
-        return true
-    } else if setWeight.contains(dividedUnit) && setWeight.contains(unitToConvert) {
-        return true
+func isSameUnit(_ origin: String, _ target: Array<String>) -> Bool {
+    var result = false
+    for unit in target {
+        if Standard.length.contains(origin) && Standard.length.contains(unit) {
+            result = true
+        }
+        else if Standard.weight.contains(origin) && Standard.weight.contains(unit) {
+            result = true
+        }
     }
-    return false
+    return result
 }
 
-// calculate converting value
-func calculateValue(dividedValue: Double, dividedUnit: String, unitToConvert: String) -> Double {
-    let convertedResult = searchUnitAndConvertTwoUnit(separatedUnit: dividedUnit, unitToConvert: unitToConvert)
-    let convertedInputValue = convertedResult.convertedInputUnitValue
-    let unitToConvertValue = convertedResult.unitToConvertValue
-    return dividedValue * convertedInputValue / unitToConvertValue
+// calculate value to convert
+func calculateUnit(_ originValue: Double, _ originUnit: String, _ unitsToCovert: Array<String>) {
+    for targetUnit in unitsToCovert {
+        let outcome = searchAndConvert(originUnit, targetUnit)
+        let startValue = outcome.originValue
+        let endValue = outcome.valueToConvert
+        let result = originValue * startValue / endValue
+        print(">>>> \(result) \(targetUnit)")
+    }
+    print("")
 }
 
 // print result
 // FIX ME: seperate function and check overlap variables and
-func convertResult() {
+func convert() {
     while true {
-        print("변환할 값과 단위를 입력하세요 e.g. 180cm m\n: ", terminator: "")
-        let inputtedUserValue = inputMessage()
-        guard (inputtedUserValue != "q") && (inputtedUserValue != "quit") else {
+        let userInput = request()
+        let input = divideInto(userInput).userValue
+        guard (input != "q") && (input != "quit") else {
             print("\n프로그램이 종료됩니다")
             return
         }
-        let dividedTwoObjects = divideTwoInputValues(inputtedUserValue: inputtedUserValue)
-        let inputValueUnit = dividedTwoObjects.valueUnit
-        let unitToConvert = dividedTwoObjects.unit
-        let dividedObject = splitValueAndUnit(in: inputValueUnit)
-        let dividedUnit = dividedObject.unit
-        let dividedValue = (dividedObject.value as NSString).doubleValue    // which is better? unwrap optional or this
-        let checkedTypes = checkSameTypes(dividedUnit: dividedUnit, unitToConvert: unitToConvert)
-        let checkedSupportUnit = checkSupportUnit(unitToConvert: unitToConvert)
-        guard checkedSupportUnit && checkedTypes else {
+        let value = (input as NSString).doubleValue    // which is better? unwrap optional or this
+        let origin = splitInto(input: input).unit
+        let target = divideInto(userInput).unit
+        let isEqual = isSameUnit(origin, target)
+        let isSupport = checkSupportUnit(target)
+        guard isSupport && isEqual else {
             print("지원하지 않는 단위입니다. 다시 입력해주세요\n")
             continue
         }
-        let calculatedValue = calculateValue(dividedValue: dividedValue, dividedUnit: dividedUnit, unitToConvert: unitToConvert)
-        print("")
-        print(String(calculatedValue) + unitToConvert)
+        calculateUnit(value, origin, target)
     }
 }
 
-convertResult()
-
+convert()
