@@ -9,12 +9,6 @@
 
 import Foundation
 
-
-enum InputError: Error {
-    case notSupport
-    case incorrectInput
-}
-
 // type collection
 // completed: Use struct and type property, DTO..? 포함관  계 has-a
 struct Standard {
@@ -22,6 +16,12 @@ struct Standard {
     static let numberID = "1234567890."
     static var length: Set<String> = ["cm", "m", "inch", "yard"]
     static var weight: Set<String> = ["g", "kg", "oz", "lb"]
+}
+
+// error case
+enum InputError: Error {
+    case notSupport
+    case incorrectInput
 }
 
 // input a initial value
@@ -102,29 +102,26 @@ func searchAndConvert(_ originUnit: String, _ unitToConvert: String) -> (originV
 }
 
 // check the unit is supported.
-func checkSupportUnit(_ target: Array<String>) -> Bool {
-    let supportedUnit = Standard.unit.keys
+func isSupportUnit(_ target: Array<String>) throws {
+    let support = Standard.unit.keys
     for unit in target {
-        guard supportedUnit.contains(unit) else {
-            return false
+        guard support.contains(unit) else {
+            throw InputError.notSupport
         }
     }
-    return true
 }
 
 // check same types
 // FIX ME: try not to use "if~else"
-func isSameUnit(_ origin: String, _ target: Array<String>) -> Bool {
-    var result = false
+func isSameUnit(_ origin: String, _ target: Array<String>) throws {
     for unit in target {
-        if Standard.length.contains(origin) && Standard.length.contains(unit) {
-            result = true
+        if (Standard.length.contains(origin) && Standard.length.contains(unit)) == false {
+            throw InputError.notSupport
         }
-        else if Standard.weight.contains(origin) && Standard.weight.contains(unit) {
-            result = true
+        else if (Standard.weight.contains(origin) && Standard.weight.contains(unit)) == false {
+            throw InputError.notSupport
         }
     }
-    return result
 }
 
 // calculate value to convert
@@ -153,15 +150,13 @@ func convert() {
             let value = (input as NSString).doubleValue    // which is better? unwrap optional or this
             let origin = splitInto(input: input).unit
             let target = try divideInto(userInput).unit
-            let isEqual = isSameUnit(origin, target)
-            let isSupport = checkSupportUnit(target)
-            guard isSupport && isEqual else {
-                print("지원하지 않는 단위입니다. 다시 입력해주세요\n")
-                continue
-            }
+            try isSameUnit(origin, target)
+            try isSupportUnit(target)
             calculateUnit(value, origin, target)
         } catch InputError.incorrectInput {
             print("공백 없이 입력해주세요\n")
+        } catch InputError.notSupport {
+            print("지원하지 않는 단위입니다\n")
         } catch {
             print("알 수 없는 에러가 발생했습니다\n")
         }
