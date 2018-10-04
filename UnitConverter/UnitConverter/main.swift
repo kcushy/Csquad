@@ -9,6 +9,12 @@
 
 import Foundation
 
+
+enum InputError: Error {
+    case notSupport
+    case incorrectInput
+}
+
 // type collection
 // completed: Use struct and type property, DTO..? 포함관  계 has-a
 struct Standard {
@@ -35,7 +41,7 @@ func request() -> String {
 
 // divide two input value
 // if input has a blank, like inch,(blank)yard, how to solve?
-func divideInto(_ userInput: String) ->  (userValue: String, unit: Array<String>) {
+func divideInto(_ userInput: String) throws ->  (userValue: String, unit: Array<String>) {
     let twoOrOne = userInput.components(separatedBy: " ").map{ String($0) }
     let value = twoOrOne[0]
     guard checkIt(has: twoOrOne) else {
@@ -43,6 +49,10 @@ func divideInto(_ userInput: String) ->  (userValue: String, unit: Array<String>
         return (value, target)
     }
     let target = twoOrOne[1].components(separatedBy: ",")
+    print(target)
+    guard !target.contains("") else {
+        throw InputError.incorrectInput
+    }
     return (value, target)
 }
 
@@ -133,22 +143,28 @@ func calculateUnit(_ originValue: Double, _ originUnit: String, _ unitsToCovert:
 // FIX ME: seperate function and check overlap variables and
 func convert() {
     while true {
-        let userInput = request()
-        let input = divideInto(userInput).userValue
-        guard (input != "q") && (input != "quit") else {
-            print("\n프로그램이 종료됩니다")
-            return
+        do {
+            let userInput = request()
+            let input = try! divideInto(userInput).userValue
+            guard (input != "q") && (input != "quit") else {
+                print("\n프로그램이 종료됩니다")
+                return
+            }
+            let value = (input as NSString).doubleValue    // which is better? unwrap optional or this
+            let origin = splitInto(input: input).unit
+            let target = try divideInto(userInput).unit
+            let isEqual = isSameUnit(origin, target)
+            let isSupport = checkSupportUnit(target)
+            guard isSupport && isEqual else {
+                print("지원하지 않는 단위입니다. 다시 입력해주세요\n")
+                continue
+            }
+            calculateUnit(value, origin, target)
+        } catch InputError.incorrectInput {
+            print("공백 없이 입력해주세요\n")
+        } catch {
+            print("알 수 없는 에러가 발생했습니다\n")
         }
-        let value = (input as NSString).doubleValue    // which is better? unwrap optional or this
-        let origin = splitInto(input: input).unit
-        let target = divideInto(userInput).unit
-        let isEqual = isSameUnit(origin, target)
-        let isSupport = checkSupportUnit(target)
-        guard isSupport && isEqual else {
-            print("지원하지 않는 단위입니다. 다시 입력해주세요\n")
-            continue
-        }
-        calculateUnit(value, origin, target)
     }
 }
 
